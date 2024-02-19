@@ -1,4 +1,4 @@
-import { useRef, useState , useEffect} from "react";
+import { useRef, useState, useEffect } from "react";
 import Places from "./components/Places.jsx";
 import { AVAILABLE_PLACES } from "./data.js";
 import Modal from "./components/Modal.jsx";
@@ -8,7 +8,7 @@ import { sortPlacesByDistance } from "./loc.js";
 function App() {
   const modal = useRef();
   const selectedPlace = useRef();
-  const [availablePlaces,setAvailablePlaces] = useState([]);
+  const [availablePlaces, setAvailablePlaces] = useState([]);
   const [pickedPlaces, setPickedPlaces] = useState([]);
 
   useEffect(() => {
@@ -17,11 +17,11 @@ function App() {
         AVAILABLE_PLACES,
         position.coords.latitude,
         position.coords.longitude
-        );
-        setAvailablePlaces(sortedPlaces);
+      );
+      setAvailablePlaces(sortedPlaces);
     });
-  },[]);
- 
+  }, []);
+
   function handleStartRemovePlace(id) {
     modal.current.open();
     selectedPlace.current = id;
@@ -39,6 +39,10 @@ function App() {
       const place = AVAILABLE_PLACES.find((place) => place.id === id);
       return [place, ...prevPickedPlaces];
     });
+    const storeIds = JSON.parse(localStorage.setItem("selectedPlaces")) || [];
+    if (storeIds.indexOf(id) === -1) {
+      localStorage.setItem("selectedPlaces", JSON.stringify([id, ...storeIds]));
+    }
   }
 
   function handleRemovePlace() {
@@ -46,6 +50,8 @@ function App() {
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current)
     );
     modal.current.close();
+  
+   
   }
 
   return (
